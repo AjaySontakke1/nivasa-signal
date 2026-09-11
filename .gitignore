@@ -1,0 +1,27 @@
+# Java / Spring Boot
+backend/target/
+*.class
+*.jar
+*.war
+
+# Environment secrets
+.env
+.env.*
+backend/src/main/resources/application-local.yml
+
+# Frontend files — needed later
+frontend/node_modules/
+frontend/dist/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.factorypath
+.settings/
+
+# Operating system files
+.DS_Store
+Thumbs.db
