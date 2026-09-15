@@ -12,17 +12,15 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "properties")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,16 +34,14 @@ public class Property {
     private String title;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "property_type", nullable = false, length = 50)
+    @Column(name = "property_type")
     private PropertyType propertyType;
 
-    @Column(length = 20)
     private String bhk;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String city;
 
-    @Column(length = 150)
     private String locality;
 
     @Column(columnDefinition = "TEXT")
@@ -54,11 +50,11 @@ public class Property {
     @Column(name = "price_inr")
     private Long priceInr;
 
-    @Column(name = "area_sqft", precision = 12, scale = 2)
+    @Column(name = "area_sqft")
     private BigDecimal areaSqft;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "availability_status", nullable = false, length = 50)
+    @Column(name = "availability_status")
     private AvailabilityStatus availabilityStatus;
 
     @Column(name = "truth_score")
@@ -67,27 +63,23 @@ public class Property {
     @Column(name = "last_checked_at")
     private LocalDateTime lastCheckedAt;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-        if (this.updatedAt == null) {
-            this.updatedAt = LocalDateTime.now();
-        }
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
         if (this.availabilityStatus == null) {
             this.availabilityStatus = AvailabilityStatus.UNVERIFIED;
         }
     }
 
     @PreUpdate
-    protected void onUpdate() {
+    public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 }

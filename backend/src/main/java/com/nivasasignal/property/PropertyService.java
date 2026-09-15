@@ -1,44 +1,28 @@
 package com.nivasasignal.property;
 
-import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
 
-    public PropertyService(PropertyRepository propertyRepository) {
-        this.propertyRepository = propertyRepository;
-    }
-
-    @Transactional
+    // Save a new property
     public Property createProperty(Property property) {
         return propertyRepository.save(property);
     }
 
+    // Get all properties
     public List<Property> getAllProperties() {
         return propertyRepository.findAll();
     }
 
+    // Get a property by ID
     public Property getPropertyById(Long id) {
-        return propertyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Property not found with id: " + id));
-    }
-
-    public List<Property> getPropertiesByCity(String city) {
-        return propertyRepository.findByCityIgnoreCase(city);
-    }
-
-    public List<Property> getPropertiesByType(PropertyType propertyType) {
-        return propertyRepository.findByPropertyType(propertyType);
-    }
-
-    public List<Property> getPropertiesByStatus(AvailabilityStatus availabilityStatus) {
-        return propertyRepository.findByAvailabilityStatus(availabilityStatus);
+        return propertyRepository.findById(id).orElse(null);
     }
 }
