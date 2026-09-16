@@ -1,5 +1,7 @@
-package com.nivasasignal.property;
+package com.nivasasignal.entity;
 
+import com.nivasasignal.enums.AvailabilityStatus;
+import com.nivasasignal.enums.PropertyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

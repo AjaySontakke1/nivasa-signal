@@ -1,7 +1,7 @@
-package com.nivasasignal.property.dto;
+package com.nivasasignal.dto;
 
-import com.nivasasignal.property.AvailabilityStatus;
-import com.nivasasignal.property.PropertyType;
+import com.nivasasignal.enums.AvailabilityStatus;
+import com.nivasasignal.enums.PropertyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

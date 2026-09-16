@@ -1,7 +1,9 @@
-package com.nivasasignal.property;
+package com.nivasasignal.controller;
 
-import com.nivasasignal.property.dto.CreatePropertyRequest;
-import com.nivasasignal.property.dto.PropertyResponse;
+import com.nivasasignal.dto.CreatePropertyRequest;
+import com.nivasasignal.dto.PropertyResponse;
+import com.nivasasignal.entity.Property;
+import com.nivasasignal.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

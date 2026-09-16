@@ -1,5 +1,8 @@
-package com.nivasasignal.property;
+package com.nivasasignal.repository;
 
+import com.nivasasignal.entity.Property;
+import com.nivasasignal.enums.AvailabilityStatus;
+import com.nivasasignal.enums.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +20,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     // Find properties by type (FLAT, VILLA, etc.)
     List<Property> findByPropertyType(PropertyType propertyType);
 
-    // Find properties by availability status (AVAILABLE, SOLD, etc.)
+    // Find properties by status (AVAILABLE, SOLD, etc.)
     List<Property> findByAvailabilityStatus(AvailabilityStatus availabilityStatus);
 }

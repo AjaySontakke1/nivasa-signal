@@ -1,4 +1,4 @@
-package com.nivasasignal.property;
+package com.nivasasignal.enums;
 
 public enum PropertyType {
     FLAT,
