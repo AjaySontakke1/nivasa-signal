@@ -1,12 +1,15 @@
 package com.nivasasignal.service;
 
+import com.nivasasignal.dto.CreatePropertyRequest;
+import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.entity.Property;
-import com.nivasasignal.enums.AvailabilityStatus;
-import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,33 +18,58 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
 
-    // Save a new property
-    public Property createProperty(Property property) {
-        return propertyRepository.save(property);
+    public PropertyResponse createProperty(CreatePropertyRequest request) {
+        Property property = new Property();
+
+        property.setTitle(request.title());
+        property.setPropertyType(request.propertyType());
+        property.setBhk(request.bhk());
+        property.setCity(request.city());
+        property.setLocality(request.locality());
+        property.setAddress(request.address());
+        property.setPriceInr(request.priceInr());
+        property.setAreaSqft(request.areaSqft());
+        property.setAvailabilityStatus(request.availabilityStatus());
+        property.setLastCheckedAt(LocalDateTime.now());
+
+        Property savedProperty = propertyRepository.save(property);
+
+        return toResponse(savedProperty);
     }
 
-    // Get all properties
-    public List<Property> getAllProperties() {
-        return propertyRepository.findAll();
+    public List<PropertyResponse> getAllProperties() {
+        return propertyRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    // Get a property by ID
-    public Property getPropertyById(Long id) {
-        return propertyRepository.findById(id).orElse(null);
+    public PropertyResponse getPropertyById(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Property not found"
+                ));
+
+        return toResponse(property);
     }
 
-    // Find properties by city
-    public List<Property> getPropertiesByCity(String city) {
-        return propertyRepository.findByCityIgnoreCase(city);
-    }
-
-    // Find properties by type
-    public List<Property> getPropertiesByType(PropertyType propertyType) {
-        return propertyRepository.findByPropertyType(propertyType);
-    }
-
-    // Find properties by status
-    public List<Property> getPropertiesByStatus(AvailabilityStatus availabilityStatus) {
-        return propertyRepository.findByAvailabilityStatus(availabilityStatus);
+    private PropertyResponse toResponse(Property property) {
+        return new PropertyResponse(
+                property.getId(),
+                property.getTitle(),
+                property.getPropertyType(),
+                property.getBhk(),
+                property.getCity(),
+                property.getLocality(),
+                property.getAddress(),
+                property.getPriceInr(),
+                property.getAreaSqft(),
+                property.getAvailabilityStatus(),
+                property.getTruthScore(),
+                property.getLastCheckedAt(),
+                property.getCreatedAt(),
+                property.getUpdatedAt()
+        );
     }
 }
