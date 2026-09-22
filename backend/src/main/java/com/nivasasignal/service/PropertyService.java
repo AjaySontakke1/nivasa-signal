@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,9 +24,9 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
 
+    // 1. Create and save a new property
     public PropertyResponse createProperty(CreatePropertyRequest request) {
         Property property = new Property();
-
         property.setTitle(request.title());
         property.setPropertyType(request.propertyType());
         property.setBhk(request.bhk());
@@ -38,27 +39,30 @@ public class PropertyService {
         property.setLastCheckedAt(LocalDateTime.now());
 
         Property savedProperty = propertyRepository.save(property);
-
         return toResponse(savedProperty);
     }
 
+    // 2. Get all properties
     public List<PropertyResponse> getAllProperties() {
-        return propertyRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        List<Property> properties = propertyRepository.findAll();
+        List<PropertyResponse> responseList = new ArrayList<>();
+
+        for (Property property : properties) {
+            responseList.add(toResponse(property));
+        }
+
+        return responseList;
     }
 
+    // 3. Get a single property by its ID
     public PropertyResponse getPropertyById(Long id) {
         Property property = propertyRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Property not found"
-                ));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
         return toResponse(property);
     }
 
+    // 4. Search properties with filters, pagination, and sorting
     public PropertyPageResponse searchProperties(
             String city,
             String locality,
@@ -71,37 +75,37 @@ public class PropertyService {
             String sortBy,
             String sortDirection
     ) {
-        String databaseField = switch (sortBy) {
-            case "price" -> "priceInr";
-            case "area" -> "areaSqft";
-            case "checked" -> "lastCheckedAt";
-            default -> "createdAt";
-        };
+        // Choose which database column to sort by
+        String sortColumn = "createdAt";
+        if ("price".equalsIgnoreCase(sortBy)) {
+            sortColumn = "priceInr";
+        } else if ("area".equalsIgnoreCase(sortBy)) {
+            sortColumn = "areaSqft";
+        } else if ("checked".equalsIgnoreCase(sortBy)) {
+            sortColumn = "lastCheckedAt";
+        }
 
-        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc")
-                ? Sort.Direction.ASC
-                : Sort.Direction.DESC;
+        // Choose ascending or descending order
+        Sort sort = "asc".equalsIgnoreCase(sortDirection)
+                ? Sort.by(sortColumn).ascending()
+                : Sort.by(sortColumn).descending();
 
-        PageRequest pageRequest = PageRequest.of(
-                page,
-                size,
-                Sort.by(direction, databaseField)
-        );
+        // Create page request
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
 
+        // Fetch properties from repository
         Page<Property> propertyPage = propertyRepository.searchProperties(
-                city,
-                locality,
-                minPrice,
-                maxPrice,
-                minAreaSqft,
-                maxAreaSqft,
-                pageRequest
+                city, locality, minPrice, maxPrice, minAreaSqft, maxAreaSqft, pageRequest
         );
+
+        // Convert entities to response DTO list
+        List<PropertyResponse> content = new ArrayList<>();
+        for (Property property : propertyPage.getContent()) {
+            content.add(toResponse(property));
+        }
 
         return new PropertyPageResponse(
-                propertyPage.getContent().stream()
-                        .map(this::toResponse)
-                        .toList(),
+                content,
                 propertyPage.getNumber(),
                 propertyPage.getSize(),
                 propertyPage.getTotalElements(),
@@ -110,6 +114,7 @@ public class PropertyService {
         );
     }
 
+    // Helper: Convert Property entity to PropertyResponse DTO
     private PropertyResponse toResponse(Property property) {
         return new PropertyResponse(
                 property.getId(),
