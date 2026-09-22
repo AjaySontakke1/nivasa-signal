@@ -1,10 +1,14 @@
 package com.nivasasignal.service;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
+import com.nivasasignal.dto.PropertyPageResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.entity.Property;
 import com.nivasasignal.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,25 +59,55 @@ public class PropertyService {
         return toResponse(property);
     }
 
-    public List<PropertyResponse> searchProperties(
+    public PropertyPageResponse searchProperties(
             String city,
             String locality,
             Long minPrice,
             Long maxPrice,
             BigDecimal minAreaSqft,
-            BigDecimal maxAreaSqft
+            BigDecimal maxAreaSqft,
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection
     ) {
-        return propertyRepository.searchProperties(
-                        city,
-                        locality,
-                        minPrice,
-                        maxPrice,
-                        minAreaSqft,
-                        maxAreaSqft
-                )
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        String databaseField = switch (sortBy) {
+            case "price" -> "priceInr";
+            case "area" -> "areaSqft";
+            case "checked" -> "lastCheckedAt";
+            default -> "createdAt";
+        };
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.by(direction, databaseField)
+        );
+
+        Page<Property> propertyPage = propertyRepository.searchProperties(
+                city,
+                locality,
+                minPrice,
+                maxPrice,
+                minAreaSqft,
+                maxAreaSqft,
+                pageRequest
+        );
+
+        return new PropertyPageResponse(
+                propertyPage.getContent().stream()
+                        .map(this::toResponse)
+                        .toList(),
+                propertyPage.getNumber(),
+                propertyPage.getSize(),
+                propertyPage.getTotalElements(),
+                propertyPage.getTotalPages(),
+                propertyPage.isLast()
+        );
     }
 
     private PropertyResponse toResponse(Property property) {

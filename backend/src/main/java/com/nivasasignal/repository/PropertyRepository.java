@@ -1,12 +1,13 @@
 package com.nivasasignal.repository;
 
 import com.nivasasignal.entity.Property;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
@@ -19,12 +20,13 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             AND (:minAreaSqft IS NULL OR p.areaSqft >= :minAreaSqft)
             AND (:maxAreaSqft IS NULL OR p.areaSqft <= :maxAreaSqft)
             """)
-    List<Property> searchProperties(
+    Page<Property> searchProperties(
             @Param("city") String city,
             @Param("locality") String locality,
             @Param("minPrice") Long minPrice,
             @Param("maxPrice") Long maxPrice,
             @Param("minAreaSqft") BigDecimal minAreaSqft,
-            @Param("maxAreaSqft") BigDecimal maxAreaSqft
+            @Param("maxAreaSqft") BigDecimal maxAreaSqft,
+            Pageable pageable
     );
 }

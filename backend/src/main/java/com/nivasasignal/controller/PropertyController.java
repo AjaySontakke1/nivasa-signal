@@ -1,9 +1,12 @@
 package com.nivasasignal.controller;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
+import com.nivasasignal.dto.PropertyPageResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.service.PropertyService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,13 +49,18 @@ public class PropertyController {
     }
 
     @GetMapping("/search")
-    public List<PropertyResponse> searchProperties(
+    public PropertyPageResponse searchProperties(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String locality,
             @RequestParam(required = false) @PositiveOrZero Long minPrice,
             @RequestParam(required = false) @PositiveOrZero Long maxPrice,
             @RequestParam(required = false) @PositiveOrZero BigDecimal minAreaSqft,
-            @RequestParam(required = false) @PositiveOrZero BigDecimal maxAreaSqft
+            @RequestParam(required = false) @PositiveOrZero BigDecimal maxAreaSqft,
+
+            @RequestParam(defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size,
+            @RequestParam(defaultValue = "created") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection
     ) {
         if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
             throw new ResponseStatusException(
@@ -70,7 +78,16 @@ public class PropertyController {
         }
 
         return propertyService.searchProperties(
-                city, locality, minPrice, maxPrice, minAreaSqft, maxAreaSqft
+                city,
+                locality,
+                minPrice,
+                maxPrice,
+                minAreaSqft,
+                maxAreaSqft,
+                page,
+                size,
+                sortBy,
+                sortDirection
         );
     }
 
