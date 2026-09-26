@@ -4,6 +4,8 @@ import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.entity.Property;
+import com.nivasasignal.enums.AvailabilityStatus;
+import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -98,7 +100,10 @@ public class PropertyService {
             Long minPrice,
             Long maxPrice,
             BigDecimal minAreaSqft,
-            BigDecimal maxAreaSqft
+            BigDecimal maxAreaSqft,
+            PropertyType propertyType,
+            String bhk,
+            AvailabilityStatus availabilityStatus
     ) {
         List<PropertyResponse> results = new ArrayList<>();
 
@@ -131,6 +136,22 @@ public class PropertyService {
 
             if (maxAreaSqft != null
                     && property.getAreaSqft().compareTo(maxAreaSqft) > 0) {
+                continue;
+            }
+
+            if (propertyType != null
+                    && property.getPropertyType() != propertyType) {
+                continue;
+            }
+
+            if (bhk != null
+                    && (property.getBhk() == null
+                    || !property.getBhk().equalsIgnoreCase(bhk))) {
+                continue;
+            }
+
+            if (availabilityStatus != null
+                    && property.getAvailabilityStatus() != availabilityStatus) {
                 continue;
             }
 

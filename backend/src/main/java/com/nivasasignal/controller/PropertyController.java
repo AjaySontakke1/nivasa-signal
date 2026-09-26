@@ -3,6 +3,8 @@ package com.nivasasignal.controller;
 import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.UpdatePropertyRequest;
+import com.nivasasignal.enums.AvailabilityStatus;
+import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.service.PropertyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +56,10 @@ public class PropertyController {
             @RequestParam(required = false) Long minPrice,
             @RequestParam(required = false) Long maxPrice,
             @RequestParam(required = false) BigDecimal minAreaSqft,
-            @RequestParam(required = false) BigDecimal maxAreaSqft
+            @RequestParam(required = false) BigDecimal maxAreaSqft,
+            @RequestParam(required = false) PropertyType propertyType,
+            @RequestParam(required = false) String bhk,
+            @RequestParam(required = false) AvailabilityStatus availabilityStatus
     ) {
         return propertyService.searchProperties(
                 city,
@@ -62,7 +67,10 @@ public class PropertyController {
                 minPrice,
                 maxPrice,
                 minAreaSqft,
-                maxAreaSqft
+                maxAreaSqft,
+                propertyType,
+                bhk,
+                availabilityStatus
         );
     }
 
