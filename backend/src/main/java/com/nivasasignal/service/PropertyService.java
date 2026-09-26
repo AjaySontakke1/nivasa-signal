@@ -2,6 +2,7 @@ package com.nivasasignal.service;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyResponse;
+import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.entity.Property;
 import com.nivasasignal.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,42 @@ public class PropertyService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
         return toResponse(property);
+    }
+
+    public PropertyResponse updateProperty(
+            Long id,
+            UpdatePropertyRequest request
+    ) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Property not found"
+                ));
+
+        property.setTitle(request.title());
+        property.setPropertyType(request.propertyType());
+        property.setBhk(request.bhk());
+        property.setCity(request.city());
+        property.setLocality(request.locality());
+        property.setAddress(request.address());
+        property.setPriceInr(request.priceInr());
+        property.setAreaSqft(request.areaSqft());
+        property.setAvailabilityStatus(request.availabilityStatus());
+        property.setLastCheckedAt(LocalDateTime.now());
+
+        Property updatedProperty = propertyRepository.save(property);
+
+        return toResponse(updatedProperty);
+    }
+
+    public void deleteProperty(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Property not found"
+                ));
+
+        propertyRepository.delete(property);
     }
 
     public List<PropertyResponse> searchProperties(
