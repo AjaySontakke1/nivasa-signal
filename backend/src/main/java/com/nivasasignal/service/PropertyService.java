@@ -10,6 +10,7 @@ import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.repository.PropertyRepository;
 import com.nivasasignal.source.SourceListingService;
 import com.nivasasignal.source.dto.SourceListingResponse;
+import com.nivasasignal.verification.TruthScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final SourceListingService sourceListingService;
+    private final TruthScoreService truthScoreService;
 
     public PropertyResponse createProperty(CreatePropertyRequest request) {
         Property property = new Property();
@@ -63,13 +65,23 @@ public class PropertyService {
     }
 
     public PropertyDetailsResponse getPropertyDetails(Long id) {
-        PropertyResponse property = getPropertyById(id);
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Property not found"
+                ));
+
+        int truthScore = truthScoreService.calculateScore(property);
+
+        property.setTruthScore(truthScore);
+
+        Property updatedProperty = propertyRepository.save(property);
 
         List<SourceListingResponse> sourceListings =
                 sourceListingService.getListingsByPropertyId(id);
 
         return new PropertyDetailsResponse(
-                property,
+                toResponse(updatedProperty),
                 sourceListings
         );
     }
