@@ -1,12 +1,15 @@
 package com.nivasasignal.service;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
+import com.nivasasignal.dto.PropertyDetailsResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.entity.Property;
 import com.nivasasignal.enums.AvailabilityStatus;
 import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.repository.PropertyRepository;
+import com.nivasasignal.source.SourceListingService;
+import com.nivasasignal.source.dto.SourceListingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.util.List;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final SourceListingService sourceListingService;
 
     public PropertyResponse createProperty(CreatePropertyRequest request) {
         Property property = new Property();
@@ -56,6 +60,18 @@ public class PropertyService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
         return toResponse(property);
+    }
+
+    public PropertyDetailsResponse getPropertyDetails(Long id) {
+        PropertyResponse property = getPropertyById(id);
+
+        List<SourceListingResponse> sourceListings =
+                sourceListingService.getListingsByPropertyId(id);
+
+        return new PropertyDetailsResponse(
+                property,
+                sourceListings
+        );
     }
 
     public PropertyResponse updateProperty(

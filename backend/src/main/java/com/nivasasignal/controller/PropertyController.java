@@ -1,6 +1,7 @@
 package com.nivasasignal.controller;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
+import com.nivasasignal.dto.PropertyDetailsResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.enums.AvailabilityStatus;
@@ -77,6 +78,13 @@ public class PropertyController {
     @GetMapping("/{id}")
     public PropertyResponse getPropertyById(@PathVariable Long id) {
         return propertyService.getPropertyById(id);
+    }
+
+    @GetMapping("/{id}/details")
+    public PropertyDetailsResponse getPropertyDetails(
+            @PathVariable Long id
+    ) {
+        return propertyService.getPropertyDetails(id);
     }
 
     @PutMapping("/{id}")
