@@ -2,6 +2,7 @@ package com.nivasasignal.source;
 
 import com.nivasasignal.source.dto.CreateSourceListingRequest;
 import com.nivasasignal.source.dto.SourceListingResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class SourceListingController {
 
     @PostMapping("/source-listings")
     public ResponseEntity<SourceListingResponse> createSourceListing(
-            @RequestBody CreateSourceListingRequest request
+            @Valid @RequestBody CreateSourceListingRequest request
     ) {
         SourceListingResponse response =
                 sourceListingService.createSourceListing(request);
