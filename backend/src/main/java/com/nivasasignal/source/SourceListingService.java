@@ -87,6 +87,30 @@ public class SourceListingService {
         return toResponse(updatedListing);
     }
 
+    public void deleteSourceListing(Long id) {
+        SourceListing sourceListing = sourceListingRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Source listing not found"
+                ));
+
+        Long propertyId = sourceListing.getPropertyId();
+
+        sourceListingRepository.delete(sourceListing);
+
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Property not found"
+                ));
+
+        int truthScore = truthScoreService.calculateScore(property);
+
+        property.setTruthScore(truthScore);
+
+        propertyRepository.save(property);
+    }
+
     public List<SourceListingResponse> getListingsByPropertyId(
             Long propertyId
     ) {
