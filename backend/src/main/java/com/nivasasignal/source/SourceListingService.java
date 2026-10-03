@@ -1,8 +1,10 @@
 package com.nivasasignal.source;
 
+import com.nivasasignal.entity.Property;
 import com.nivasasignal.repository.PropertyRepository;
 import com.nivasasignal.source.dto.CreateSourceListingRequest;
 import com.nivasasignal.source.dto.SourceListingResponse;
+import com.nivasasignal.verification.TruthScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,16 @@ public class SourceListingService {
 
     private final SourceListingRepository sourceListingRepository;
     private final PropertyRepository propertyRepository;
+    private final TruthScoreService truthScoreService;
 
     public SourceListingResponse createSourceListing(
             CreateSourceListingRequest request
     ) {
-        boolean propertyExists = propertyRepository.existsById(request.propertyId());
-
-        if (!propertyExists) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Property not found"
-            );
-        }
+        Property property = propertyRepository.findById(request.propertyId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Property not found"
+                ));
 
         SourceListing sourceListing = new SourceListing();
 
@@ -42,6 +42,12 @@ public class SourceListingService {
 
         SourceListing savedListing =
                 sourceListingRepository.save(sourceListing);
+
+        int truthScore = truthScoreService.calculateScore(property);
+
+        property.setTruthScore(truthScore);
+
+        propertyRepository.save(property);
 
         return toResponse(savedListing);
     }
