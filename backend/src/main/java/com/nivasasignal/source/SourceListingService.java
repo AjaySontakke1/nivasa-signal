@@ -4,6 +4,7 @@ import com.nivasasignal.entity.Property;
 import com.nivasasignal.repository.PropertyRepository;
 import com.nivasasignal.source.dto.CreateSourceListingRequest;
 import com.nivasasignal.source.dto.SourceListingResponse;
+import com.nivasasignal.source.dto.UpdateSourceListingRequest;
 import com.nivasasignal.verification.TruthScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,40 @@ public class SourceListingService {
         propertyRepository.save(property);
 
         return toResponse(savedListing);
+    }
+
+    public SourceListingResponse updateSourceListing(
+            Long id,
+            UpdateSourceListingRequest request
+    ) {
+        SourceListing sourceListing = sourceListingRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Source listing not found"
+                ));
+
+        sourceListing.setSourceUrl(request.sourceUrl());
+        sourceListing.setSourcePriceInr(request.sourcePriceInr());
+        sourceListing.setSourceStatus(request.sourceStatus());
+        sourceListing.setLastSeenAt(LocalDateTime.now());
+
+        SourceListing updatedListing =
+                sourceListingRepository.save(sourceListing);
+
+        Property property = propertyRepository.findById(
+                sourceListing.getPropertyId()
+        ).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Property not found"
+        ));
+
+        int truthScore = truthScoreService.calculateScore(property);
+
+        property.setTruthScore(truthScore);
+
+        propertyRepository.save(property);
+
+        return toResponse(updatedListing);
     }
 
     public List<SourceListingResponse> getListingsByPropertyId(
