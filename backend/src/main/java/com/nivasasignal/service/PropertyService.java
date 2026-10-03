@@ -10,6 +10,7 @@ import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.repository.PropertyRepository;
 import com.nivasasignal.source.SourceListingService;
 import com.nivasasignal.source.dto.SourceListingResponse;
+import com.nivasasignal.verification.PropertyStatusHistoryService;
 import com.nivasasignal.verification.TruthScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final SourceListingService sourceListingService;
     private final TruthScoreService truthScoreService;
+    private final PropertyStatusHistoryService propertyStatusHistoryService;
 
     public PropertyResponse createProperty(CreatePropertyRequest request) {
         Property property = new Property();
@@ -96,6 +98,9 @@ public class PropertyService {
                         "Property not found"
                 ));
 
+        AvailabilityStatus oldStatus = property.getAvailabilityStatus();
+        AvailabilityStatus newStatus = request.availabilityStatus();
+
         property.setTitle(request.title());
         property.setPropertyType(request.propertyType());
         property.setBhk(request.bhk());
@@ -104,10 +109,17 @@ public class PropertyService {
         property.setAddress(request.address());
         property.setPriceInr(request.priceInr());
         property.setAreaSqft(request.areaSqft());
-        property.setAvailabilityStatus(request.availabilityStatus());
+        property.setAvailabilityStatus(newStatus);
         property.setLastCheckedAt(LocalDateTime.now());
 
         Property updatedProperty = propertyRepository.save(property);
+
+        if (newStatus != null && newStatus != oldStatus) {
+            propertyStatusHistoryService.saveStatus(
+                    updatedProperty.getId(),
+                    newStatus.name()
+            );
+        }
 
         return toResponse(updatedProperty);
     }
