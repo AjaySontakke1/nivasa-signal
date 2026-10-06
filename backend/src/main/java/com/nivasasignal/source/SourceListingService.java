@@ -120,6 +120,28 @@ public class SourceListingService {
                 .toList();
     }
 
+    public void markOldListingsInactive() {
+
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        List<SourceListing> oldListings =
+                sourceListingRepository.findByLastSeenAtBefore(sevenDaysAgo);
+
+        for (SourceListing listing : oldListings) {
+
+            String status = listing.getSourceStatus();
+
+            if (status != null
+                    && !status.equalsIgnoreCase("SOLD")
+                    && !status.equalsIgnoreCase("INACTIVE")) {
+
+                listing.setSourceStatus("INACTIVE");
+
+                sourceListingRepository.save(listing);
+            }
+        }
+    }
+
     private SourceListingResponse toResponse(
             SourceListing sourceListing
     ) {
