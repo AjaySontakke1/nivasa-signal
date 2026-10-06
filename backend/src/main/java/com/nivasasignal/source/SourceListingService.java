@@ -122,10 +122,10 @@ public class SourceListingService {
 
     public void markOldListingsInactive() {
 
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+        LocalDateTime tenDaysAgo = LocalDateTime.now().minusDays(10);
 
         List<SourceListing> oldListings =
-                sourceListingRepository.findByLastSeenAtBefore(sevenDaysAgo);
+                sourceListingRepository.findByLastSeenAtBefore(tenDaysAgo);
 
         for (SourceListing listing : oldListings) {
 
