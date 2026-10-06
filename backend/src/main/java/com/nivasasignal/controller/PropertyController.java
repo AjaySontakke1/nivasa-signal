@@ -7,6 +7,8 @@ import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.enums.AvailabilityStatus;
 import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.service.PropertyService;
+import com.nivasasignal.verification.PropertyStatusHistoryService;
+import com.nivasasignal.verification.dto.PropertyStatusHistoryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ import java.util.List;
 public class PropertyController {
 
     private final PropertyService propertyService;
+    private final PropertyStatusHistoryService propertyStatusHistoryService;
 
     @PostMapping
     public ResponseEntity<PropertyResponse> createProperty(
@@ -85,6 +88,13 @@ public class PropertyController {
             @PathVariable Long id
     ) {
         return propertyService.getPropertyDetails(id);
+    }
+
+    @GetMapping("/{id}/status-history")
+    public List<PropertyStatusHistoryResponse> getStatusHistory(
+            @PathVariable Long id
+    ) {
+        return propertyStatusHistoryService.getHistory(id);
     }
 
     @PutMapping("/{id}")
