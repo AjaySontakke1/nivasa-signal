@@ -6,8 +6,7 @@ public record PropertyPageResponse(
         List<PropertyResponse> properties,
         int page,
         int size,
-        long totalProperties,
-        int totalPages,
-        boolean last
+        int totalProperties,
+        int totalPages
 ) {
 }

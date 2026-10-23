@@ -2,6 +2,7 @@ package com.nivasasignal.service;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyDetailsResponse;
+import com.nivasasignal.dto.PropertyPageResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.entity.Property;
@@ -134,7 +135,7 @@ public class PropertyService {
         propertyRepository.delete(property);
     }
 
-    public List<PropertyResponse> searchProperties(
+    public PropertyPageResponse searchProperties(
             String city,
             String locality,
             Long minPrice,
@@ -144,9 +145,11 @@ public class PropertyService {
             PropertyType propertyType,
             String bhk,
             AvailabilityStatus availabilityStatus,
-            Integer minTruthScore
+            Integer minTruthScore,
+            int page,
+            int size
     ) {
-        List<PropertyResponse> results = new ArrayList<>();
+        List<Property> results = new ArrayList<>();
 
         for (Property property : propertyRepository.findAll()) {
 
@@ -202,7 +205,7 @@ public class PropertyService {
                 continue;
             }
 
-            results.add(toResponse(property));
+            results.add(property);
         }
 
         results.sort((first, second) -> Integer.compare(
@@ -210,7 +213,36 @@ public class PropertyService {
                 first.getTruthScore() != null ? first.getTruthScore() : 0
         ));
 
-        return results;
+        page = Math.max(page, 0);
+        size = Math.min(Math.max(size, 1), 50);
+
+        int totalProperties = results.size();
+
+        int totalPages = (int) Math.ceil(
+                (double) totalProperties / size
+        );
+
+        int start = page * size;
+        int end = Math.min(start + size, totalProperties);
+
+        List<PropertyResponse> propertyResponses = new ArrayList<>();
+
+        if (start < totalProperties) {
+
+            List<Property> pageProperties = results.subList(start, end);
+
+            for (Property property : pageProperties) {
+                propertyResponses.add(toResponse(property));
+            }
+        }
+
+        return new PropertyPageResponse(
+                propertyResponses,
+                page,
+                size,
+                totalProperties,
+                totalPages
+        );
     }
 
     private PropertyResponse toResponse(Property property) {

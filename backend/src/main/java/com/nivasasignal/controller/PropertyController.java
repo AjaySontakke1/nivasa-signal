@@ -2,6 +2,7 @@ package com.nivasasignal.controller;
 
 import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyDetailsResponse;
+import com.nivasasignal.dto.PropertyPageResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.enums.AvailabilityStatus;
@@ -54,7 +55,7 @@ public class PropertyController {
     }
 
     @GetMapping("/search")
-    public List<PropertyResponse> searchProperties(
+    public PropertyPageResponse searchProperties(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String locality,
             @RequestParam(required = false) Long minPrice,
@@ -64,7 +65,9 @@ public class PropertyController {
             @RequestParam(required = false) PropertyType propertyType,
             @RequestParam(required = false) String bhk,
             @RequestParam(required = false) AvailabilityStatus availabilityStatus,
-            @RequestParam(required = false) Integer minTruthScore
+            @RequestParam(required = false) Integer minTruthScore,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         return propertyService.searchProperties(
                 city,
@@ -76,7 +79,9 @@ public class PropertyController {
                 propertyType,
                 bhk,
                 availabilityStatus,
-                minTruthScore
+                minTruthScore,
+                page,
+                size
         );
     }
 
