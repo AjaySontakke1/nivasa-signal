@@ -63,7 +63,8 @@ public class PropertyController {
             @RequestParam(required = false) BigDecimal maxAreaSqft,
             @RequestParam(required = false) PropertyType propertyType,
             @RequestParam(required = false) String bhk,
-            @RequestParam(required = false) AvailabilityStatus availabilityStatus
+            @RequestParam(required = false) AvailabilityStatus availabilityStatus,
+            @RequestParam(required = false) Integer minTruthScore
     ) {
         return propertyService.searchProperties(
                 city,
@@ -74,7 +75,8 @@ public class PropertyController {
                 maxAreaSqft,
                 propertyType,
                 bhk,
-                availabilityStatus
+                availabilityStatus,
+                minTruthScore
         );
     }
 

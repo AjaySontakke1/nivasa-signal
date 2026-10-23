@@ -143,7 +143,8 @@ public class PropertyService {
             BigDecimal maxAreaSqft,
             PropertyType propertyType,
             String bhk,
-            AvailabilityStatus availabilityStatus
+            AvailabilityStatus availabilityStatus,
+            Integer minTruthScore
     ) {
         List<PropertyResponse> results = new ArrayList<>();
 
@@ -192,6 +193,12 @@ public class PropertyService {
 
             if (availabilityStatus != null
                     && property.getAvailabilityStatus() != availabilityStatus) {
+                continue;
+            }
+
+            if (minTruthScore != null
+                    && (property.getTruthScore() == null
+                    || property.getTruthScore() < minTruthScore)) {
                 continue;
             }
 

@@ -22,4 +22,7 @@ public record PropertyResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
+    public Integer getTruthScore() {
+        return truthScore;
+    }
 }
