@@ -205,6 +205,11 @@ public class PropertyService {
             results.add(toResponse(property));
         }
 
+        results.sort((first, second) -> Integer.compare(
+                second.getTruthScore() != null ? second.getTruthScore() : 0,
+                first.getTruthScore() != null ? first.getTruthScore() : 0
+        ));
+
         return results;
     }
 
