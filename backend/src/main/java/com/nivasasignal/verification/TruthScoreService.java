@@ -17,6 +17,7 @@ public class TruthScoreService {
     private final SourceListingRepository sourceListingRepository;
 
     public int calculateScore(Property property) {
+
         int score = 0;
 
         if (property.getAvailabilityStatus() == AvailabilityStatus.AVAILABLE) {
@@ -26,24 +27,37 @@ public class TruthScoreService {
         List<SourceListing> listings =
                 sourceListingRepository.findByPropertyId(property.getId());
 
-        if (listings.size() >= 1) {
-            score = score + 30;
-        }
-
-        if (listings.size() >= 2) {
-            score = score + 20;
-        }
-
-        boolean checkedToday = false;
+        int activeListingCount = 0;
+        boolean hasRecentActiveListing = false;
 
         for (SourceListing listing : listings) {
-            if (listing.getLastSeenAt() != null
-                    && listing.getLastSeenAt().isAfter(LocalDateTime.now().minusDays(1))) {
-                checkedToday = true;
+
+            if (listing.getSourceStatus() != null
+                    && listing.getSourceStatus().equalsIgnoreCase("AVAILABLE")) {
+
+                activeListingCount = activeListingCount + 1;
+
+                if (listing.getLastSeenAt() != null) {
+                    boolean checkedInLast24Hours =
+                            listing.getLastSeenAt()
+                                    .isAfter(LocalDateTime.now().minusDays(1));
+
+                    if (checkedInLast24Hours) {
+                        hasRecentActiveListing = true;
+                    }
+                }
             }
         }
 
-        if (checkedToday) {
+        if (activeListingCount >= 1) {
+            score = score + 30;
+        }
+
+        if (activeListingCount >= 2) {
+            score = score + 20;
+        }
+
+        if (hasRecentActiveListing) {
             score = score + 20;
         }
 
