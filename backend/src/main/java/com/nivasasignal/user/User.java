@@ -26,8 +26,8 @@ public class User {
     @Column(name = "password_hash")
     private String passwordHash;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
+    @Column(name = "is_admin")
+    private boolean admin;
 
     @Column(name = "email_verified")
     private boolean emailVerified;

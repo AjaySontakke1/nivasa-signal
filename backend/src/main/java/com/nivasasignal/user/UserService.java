@@ -28,15 +28,6 @@ public class UserService {
             );
         }
 
-        if (request.role() != UserRole.BUYER
-                && request.role() != UserRole.OWNER) {
-
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Only BUYER or OWNER can register"
-            );
-        }
-
         User user = new User();
 
         user.setFullName(request.fullName().trim());
@@ -44,7 +35,7 @@ public class UserService {
         user.setPasswordHash(
                 passwordEncoder.encode(request.password())
         );
-        user.setRole(request.role());
+        user.setAdmin(false);
         user.setEmailVerified(false);
 
         User savedUser = userRepository.save(user);
@@ -53,7 +44,6 @@ public class UserService {
                 savedUser.getId(),
                 savedUser.getFullName(),
                 savedUser.getEmail(),
-                savedUser.getRole(),
                 savedUser.isEmailVerified(),
                 savedUser.getCreatedAt()
         );
