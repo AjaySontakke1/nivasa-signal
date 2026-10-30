@@ -1,5 +1,7 @@
 package com.nivasasignal.user;
 
+import com.nivasasignal.user.dto.LoginUserRequest;
+import com.nivasasignal.user.dto.LoginUserResponse;
 import com.nivasasignal.user.dto.RegisterUserRequest;
 import com.nivasasignal.user.dto.RegisterUserResponse;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,36 @@ public class UserService {
                 savedUser.getEmail(),
                 savedUser.isEmailVerified(),
                 savedUser.getCreatedAt()
+        );
+    }
+
+    public LoginUserResponse login(LoginUserRequest request) {
+
+        String email = request.email().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Invalid email or password"
+                ));
+
+        boolean passwordMatches = passwordEncoder.matches(
+                request.password(),
+                user.getPasswordHash()
+        );
+
+        if (!passwordMatches) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid email or password"
+            );
+        }
+
+        return new LoginUserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.isAdmin()
         );
     }
 }
