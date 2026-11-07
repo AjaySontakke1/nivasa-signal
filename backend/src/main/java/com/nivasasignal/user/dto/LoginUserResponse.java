@@ -4,6 +4,7 @@ public record LoginUserResponse(
         Long id,
         String fullName,
         String email,
-        boolean admin
+        boolean admin,
+        String token
 ) {
 }

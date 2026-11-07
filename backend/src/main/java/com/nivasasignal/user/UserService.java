@@ -1,5 +1,6 @@
 package com.nivasasignal.user;
 
+import com.nivasasignal.security.JwtService;
 import com.nivasasignal.user.dto.LoginUserRequest;
 import com.nivasasignal.user.dto.LoginUserResponse;
 import com.nivasasignal.user.dto.RegisterUserRequest;
@@ -16,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public RegisterUserResponse register(RegisterUserRequest request) {
 
@@ -73,11 +75,14 @@ public class UserService {
             );
         }
 
+        String token = jwtService.generateToken(user.getEmail());
+
         return new LoginUserResponse(
                 user.getId(),
                 user.getFullName(),
                 user.getEmail(),
-                user.isAdmin()
+                user.isAdmin(),
+                token
         );
     }
 }

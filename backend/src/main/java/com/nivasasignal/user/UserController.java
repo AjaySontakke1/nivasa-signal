@@ -1,5 +1,7 @@
 package com.nivasasignal.user;
 
+import com.nivasasignal.user.dto.LoginUserRequest;
+import com.nivasasignal.user.dto.LoginUserResponse;
 import com.nivasasignal.user.dto.RegisterUserRequest;
 import com.nivasasignal.user.dto.RegisterUserResponse;
 import jakarta.validation.Valid;
@@ -20,5 +22,12 @@ public class UserController {
             @Valid @RequestBody RegisterUserRequest request
     ) {
         return userService.register(request);
+    }
+
+    @PostMapping("/login")
+    public LoginUserResponse login(
+            @Valid @RequestBody LoginUserRequest request
+    ) {
+        return userService.login(request);
     }
 }
