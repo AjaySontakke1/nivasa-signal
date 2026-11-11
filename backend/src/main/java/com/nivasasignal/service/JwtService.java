@@ -1,4 +1,4 @@
-package com.nivasasignal.security;
+package com.nivasasignal.service;
 
 import com.nivasasignal.config.JwtProperties;
 import io.jsonwebtoken.JwtException;

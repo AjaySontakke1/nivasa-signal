@@ -1,5 +1,7 @@
 package com.nivasasignal.security;
 
+import com.nivasasignal.service.JwtService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

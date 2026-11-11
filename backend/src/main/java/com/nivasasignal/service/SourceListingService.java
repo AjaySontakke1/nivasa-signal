@@ -1,11 +1,12 @@
-package com.nivasasignal.source;
+package com.nivasasignal.service;
 
+import com.nivasasignal.dto.CreateSourceListingRequest;
+import com.nivasasignal.dto.SourceListingResponse;
+import com.nivasasignal.dto.UpdateSourceListingRequest;
 import com.nivasasignal.entity.Property;
+import com.nivasasignal.entity.SourceListing;
 import com.nivasasignal.repository.PropertyRepository;
-import com.nivasasignal.source.dto.CreateSourceListingRequest;
-import com.nivasasignal.source.dto.SourceListingResponse;
-import com.nivasasignal.source.dto.UpdateSourceListingRequest;
-import com.nivasasignal.verification.TruthScoreService;
+import com.nivasasignal.repository.SourceListingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.nivasasignal.user.dto;
+package com.nivasasignal.dto;
 
 public record LoginUserResponse(
         Long id,

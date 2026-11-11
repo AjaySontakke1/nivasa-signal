@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @ConfigurationPropertiesScan
-public class NivasaSignalBackendApplication {
+public class NivasaSignalApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(NivasaSignalBackendApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(NivasaSignalApplication.class, args);
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.nivasasignal.source;
+package com.nivasasignal.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

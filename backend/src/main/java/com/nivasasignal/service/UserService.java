@@ -1,10 +1,11 @@
-package com.nivasasignal.user;
+package com.nivasasignal.service;
 
-import com.nivasasignal.security.JwtService;
-import com.nivasasignal.user.dto.LoginUserRequest;
-import com.nivasasignal.user.dto.LoginUserResponse;
-import com.nivasasignal.user.dto.RegisterUserRequest;
-import com.nivasasignal.user.dto.RegisterUserResponse;
+import com.nivasasignal.dto.LoginUserRequest;
+import com.nivasasignal.dto.LoginUserResponse;
+import com.nivasasignal.dto.RegisterUserRequest;
+import com.nivasasignal.dto.RegisterUserResponse;
+import com.nivasasignal.entity.User;
+import com.nivasasignal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

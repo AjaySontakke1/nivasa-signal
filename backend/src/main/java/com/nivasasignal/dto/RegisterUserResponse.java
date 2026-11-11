@@ -1,4 +1,4 @@
-package com.nivasasignal.user.dto;
+package com.nivasasignal.dto;
 
 import java.time.LocalDateTime;
 

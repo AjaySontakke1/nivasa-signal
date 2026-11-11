@@ -1,5 +1,6 @@
-package com.nivasasignal.verification;
+package com.nivasasignal.repository;
 
+import com.nivasasignal.entity.PropertyStatusHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

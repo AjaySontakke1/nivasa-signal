@@ -1,4 +1,4 @@
-package com.nivasasignal.verification;
+package com.nivasasignal.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

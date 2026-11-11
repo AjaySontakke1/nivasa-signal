@@ -1,9 +1,9 @@
-package com.nivasasignal.verification;
+package com.nivasasignal.service;
 
 import com.nivasasignal.entity.Property;
+import com.nivasasignal.entity.SourceListing;
 import com.nivasasignal.enums.AvailabilityStatus;
-import com.nivasasignal.source.SourceListing;
-import com.nivasasignal.source.SourceListingRepository;
+import com.nivasasignal.repository.SourceListingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

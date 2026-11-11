@@ -1,5 +1,6 @@
-package com.nivasasignal.source;
+package com.nivasasignal.repository;
 
+import com.nivasasignal.entity.SourceListing;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

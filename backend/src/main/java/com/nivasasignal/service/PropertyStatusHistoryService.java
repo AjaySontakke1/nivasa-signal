@@ -1,6 +1,8 @@
-package com.nivasasignal.verification;
+package com.nivasasignal.service;
 
-import com.nivasasignal.verification.dto.PropertyStatusHistoryResponse;
+import com.nivasasignal.dto.PropertyStatusHistoryResponse;
+import com.nivasasignal.entity.PropertyStatusHistory;
+import com.nivasasignal.repository.PropertyStatusHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,10 @@
-package com.nivasasignal.user;
+package com.nivasasignal.controller;
 
-import com.nivasasignal.user.dto.LoginUserRequest;
-import com.nivasasignal.user.dto.LoginUserResponse;
-import com.nivasasignal.user.dto.RegisterUserRequest;
-import com.nivasasignal.user.dto.RegisterUserResponse;
+import com.nivasasignal.dto.LoginUserRequest;
+import com.nivasasignal.dto.LoginUserResponse;
+import com.nivasasignal.dto.RegisterUserRequest;
+import com.nivasasignal.dto.RegisterUserResponse;
+import com.nivasasignal.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

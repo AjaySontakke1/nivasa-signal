@@ -1,4 +1,4 @@
-package com.nivasasignal.user;
+package com.nivasasignal.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

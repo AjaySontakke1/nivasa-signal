@@ -1,4 +1,4 @@
-package com.nivasasignal.user.dto;
+package com.nivasasignal.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
