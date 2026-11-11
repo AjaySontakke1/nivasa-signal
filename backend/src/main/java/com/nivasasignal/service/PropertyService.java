@@ -3,6 +3,7 @@ package com.nivasasignal.service;
 import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyDetailsResponse;
 import com.nivasasignal.dto.PropertyPageResponse;
+import com.nivasasignal.dto.PropertyPassportResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.SubmitPropertyRequest;
 import com.nivasasignal.dto.UpdatePropertyRequest;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -120,6 +122,79 @@ public class PropertyService {
         return new PropertyDetailsResponse(
                 toResponse(updatedProperty),
                 sourceListings
+        );
+    }
+
+    public PropertyPassportResponse getPropertyPassport(Long propertyId) {
+
+        PropertyResponse property = getPropertyById(propertyId);
+
+        List<SourceListingResponse> sourceListings =
+                sourceListingService.getListingsByPropertyId(propertyId);
+
+        long activeSourceCount = sourceListings.stream()
+                .filter(source -> source.sourceStatus() != null
+                        && source.sourceStatus().equalsIgnoreCase("AVAILABLE"))
+                .count();
+
+        long inactiveSourceCount = sourceListings.stream()
+                .filter(source -> source.sourceStatus() != null
+                        && source.sourceStatus().equalsIgnoreCase("INACTIVE"))
+                .count();
+
+        List<Long> sourcePrices = sourceListings.stream()
+                .map(SourceListingResponse::sourcePriceInr)
+                .filter(Objects::nonNull)
+                .toList();
+
+        Long lowestPrice = sourcePrices.stream()
+                .min(Long::compareTo)
+                .orElse(null);
+
+        Long highestPrice = sourcePrices.stream()
+                .max(Long::compareTo)
+                .orElse(null);
+
+        Long priceDifference = null;
+
+        if (lowestPrice != null && highestPrice != null) {
+            priceDifference = highestPrice - lowestPrice;
+        }
+
+        LocalDateTime lastSourceSeenAt = sourceListings.stream()
+                .map(SourceListingResponse::lastSeenAt)
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+
+        List<String> signals = new ArrayList<>();
+
+        if (activeSourceCount >= 2) {
+            signals.add("Found on multiple active sources");
+        } else if (activeSourceCount == 1) {
+            signals.add("Found on one active source");
+        } else {
+            signals.add("No active source listing found");
+        }
+
+        if (priceDifference != null && priceDifference > 0) {
+            signals.add("Price differs across source platforms");
+        }
+
+        if (inactiveSourceCount > 0) {
+            signals.add("One or more source listings are inactive");
+        }
+
+        return new PropertyPassportResponse(
+                property,
+                sourceListings,
+                activeSourceCount,
+                inactiveSourceCount,
+                lowestPrice,
+                highestPrice,
+                priceDifference,
+                lastSourceSeenAt,
+                signals
         );
     }
 

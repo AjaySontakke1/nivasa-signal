@@ -3,6 +3,7 @@ package com.nivasasignal.controller;
 import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyDetailsResponse;
 import com.nivasasignal.dto.PropertyPageResponse;
+import com.nivasasignal.dto.PropertyPassportResponse;
 import com.nivasasignal.dto.PropertyResponse;
 import com.nivasasignal.dto.SubmitPropertyRequest;
 import com.nivasasignal.dto.UpdatePropertyRequest;
@@ -102,6 +103,13 @@ public class PropertyController {
     @GetMapping("/{id}")
     public PropertyResponse getPropertyById(@PathVariable Long id) {
         return propertyService.getPropertyById(id);
+    }
+
+    @GetMapping("/{id}/passport")
+    public PropertyPassportResponse getPropertyPassport(
+            @PathVariable Long id
+    ) {
+        return propertyService.getPropertyPassport(id);
     }
 
     @GetMapping("/{id}/details")
