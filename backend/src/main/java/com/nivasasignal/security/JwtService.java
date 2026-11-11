@@ -1,6 +1,7 @@
 package com.nivasasignal.security;
 
 import com.nivasasignal.config.JwtProperties;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -30,6 +31,31 @@ public class JwtService {
                 .expiration(expiration)
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    public boolean isTokenValid(String token) {
+
+        try {
+            Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token);
+
+            return true;
+
+        } catch (JwtException | IllegalArgumentException exception) {
+            return false;
+        }
+    }
+
+    public String getEmailFromToken(String token) {
+
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
     private SecretKey getSigningKey() {
