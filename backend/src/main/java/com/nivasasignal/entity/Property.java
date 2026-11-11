@@ -62,6 +62,9 @@ public class Property {
     @Column(name = "truth_score")
     private Integer truthScore;
 
+    @Column(name = "submitted_by_user_id")
+    private Long submittedByUserId;
+
     @Column(name = "last_checked_at")
     private LocalDateTime lastCheckedAt;
 

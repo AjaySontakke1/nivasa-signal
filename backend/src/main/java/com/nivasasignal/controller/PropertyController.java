@@ -4,6 +4,7 @@ import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyDetailsResponse;
 import com.nivasasignal.dto.PropertyPageResponse;
 import com.nivasasignal.dto.PropertyResponse;
+import com.nivasasignal.dto.SubmitPropertyRequest;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.enums.AvailabilityStatus;
 import com.nivasasignal.enums.PropertyType;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +49,18 @@ public class PropertyController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @PostMapping("/submit")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PropertyResponse submitProperty(
+            @Valid @RequestBody SubmitPropertyRequest request,
+            Authentication authentication
+    ) {
+        return propertyService.submitProperty(
+                request,
+                authentication.getName()
+        );
     }
 
     @GetMapping

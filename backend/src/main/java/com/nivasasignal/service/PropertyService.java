@@ -4,11 +4,14 @@ import com.nivasasignal.dto.CreatePropertyRequest;
 import com.nivasasignal.dto.PropertyDetailsResponse;
 import com.nivasasignal.dto.PropertyPageResponse;
 import com.nivasasignal.dto.PropertyResponse;
+import com.nivasasignal.dto.SubmitPropertyRequest;
 import com.nivasasignal.dto.UpdatePropertyRequest;
 import com.nivasasignal.entity.Property;
+import com.nivasasignal.entity.User;
 import com.nivasasignal.enums.AvailabilityStatus;
 import com.nivasasignal.enums.PropertyType;
 import com.nivasasignal.repository.PropertyRepository;
+import com.nivasasignal.repository.UserRepository;
 import com.nivasasignal.dto.SourceListingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,9 +28,43 @@ import java.util.List;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final UserRepository userRepository;
     private final SourceListingService sourceListingService;
     private final TruthScoreService truthScoreService;
     private final PropertyStatusHistoryService propertyStatusHistoryService;
+
+    public PropertyResponse submitProperty(
+            SubmitPropertyRequest request,
+            String email
+    ) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "User not found"
+                ));
+
+        Property property = new Property();
+
+        property.setTitle(request.title());
+        property.setPropertyType(request.propertyType());
+        property.setBhk(request.bhk());
+        property.setCity(request.city());
+        property.setLocality(request.locality());
+        property.setAddress(request.address());
+        property.setPriceInr(request.priceInr());
+        property.setAreaSqft(request.areaSqft());
+
+        property.setAvailabilityStatus(
+                AvailabilityStatus.UNVERIFIED
+        );
+
+        property.setTruthScore(0);
+        property.setSubmittedByUserId(user.getId());
+
+        Property savedProperty = propertyRepository.save(property);
+
+        return toResponse(savedProperty);
+    }
 
     public PropertyResponse createProperty(CreatePropertyRequest request) {
         Property property = new Property();
