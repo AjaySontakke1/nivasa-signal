@@ -11,6 +11,8 @@ public record PropertyPassportResponse(
         Long lowestSourcePriceInr,
         Long highestSourcePriceInr,
         Long priceDifferenceInr,
+        Double priceSpreadPercentage,
+        String freshnessLabel,
         LocalDateTime lastSourceSeenAt,
         List<String> signals
 ) {

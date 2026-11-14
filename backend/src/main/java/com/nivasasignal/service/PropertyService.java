@@ -161,11 +161,26 @@ public class PropertyService {
             priceDifference = highestPrice - lowestPrice;
         }
 
+        Double priceSpreadPercentage = null;
+
+        if (lowestPrice != null
+                && highestPrice != null
+                && lowestPrice > 0) {
+
+            double spread = (
+                    (highestPrice - lowestPrice) * 100.0
+            ) / lowestPrice;
+
+            priceSpreadPercentage = Math.round(spread * 100.0) / 100.0;
+        }
+
         LocalDateTime lastSourceSeenAt = sourceListings.stream()
                 .map(SourceListingResponse::lastSeenAt)
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
+
+        String freshnessLabel = getFreshnessLabel(lastSourceSeenAt);
 
         List<String> signals = new ArrayList<>();
 
@@ -185,6 +200,14 @@ public class PropertyService {
             signals.add("One or more source listings are inactive");
         }
 
+        if (freshnessLabel.equals("FRESH")) {
+            signals.add("Source data was checked in the last 24 hours");
+        }
+
+        if (freshnessLabel.equals("OLD")) {
+            signals.add("Source data may be outdated");
+        }
+
         return new PropertyPassportResponse(
                 property,
                 sourceListings,
@@ -193,9 +216,28 @@ public class PropertyService {
                 lowestPrice,
                 highestPrice,
                 priceDifference,
+                priceSpreadPercentage,
+                freshnessLabel,
                 lastSourceSeenAt,
                 signals
         );
+    }
+
+    private String getFreshnessLabel(LocalDateTime lastSourceSeenAt) {
+
+        if (lastSourceSeenAt == null) {
+            return "UNKNOWN";
+        }
+
+        if (lastSourceSeenAt.isAfter(LocalDateTime.now().minusDays(1))) {
+            return "FRESH";
+        }
+
+        if (lastSourceSeenAt.isAfter(LocalDateTime.now().minusDays(7))) {
+            return "RECENT";
+        }
+
+        return "OLD";
     }
 
     public PropertyResponse updateProperty(
