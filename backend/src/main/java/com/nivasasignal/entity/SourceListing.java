@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,6 +35,15 @@ public class SourceListing {
 
     @Column(name = "source_url")
     private String sourceUrl;
+
+    @Column(name = "source_property_type")
+    private String sourcePropertyType;
+
+    @Column(name = "source_bhk")
+    private String sourceBhk;
+
+    @Column(name = "source_area_sqft")
+    private BigDecimal sourceAreaSqft;
 
     @Column(name = "source_price_inr")
     private Long sourcePriceInr;
