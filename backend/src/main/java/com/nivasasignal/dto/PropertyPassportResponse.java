@@ -15,6 +15,8 @@ public record PropertyPassportResponse(
         String freshnessLabel,
         LocalDateTime lastSourceSeenAt,
         List<String> signals,
-        List<String> conflicts
+        List<String> conflicts,
+        int sourceAgreementScore,
+        String sourceAgreementLabel
 ) {
 }

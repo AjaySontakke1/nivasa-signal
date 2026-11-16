@@ -212,6 +212,16 @@ public class PropertyService {
 
         List<String> conflicts = findSourceConflicts(sourceListings);
 
+        int sourceAgreementScore = calculateSourceAgreementScore(
+                sourceListings,
+                conflicts,
+                priceSpreadPercentage
+        );
+
+        String sourceAgreementLabel = getSourceAgreementLabel(
+                sourceAgreementScore
+        );
+
         return new PropertyPassportResponse(
                 property,
                 sourceListings,
@@ -224,8 +234,45 @@ public class PropertyService {
                 freshnessLabel,
                 lastSourceSeenAt,
                 signals,
-                conflicts
+                conflicts,
+                sourceAgreementScore,
+                sourceAgreementLabel
         );
+    }
+
+    private int calculateSourceAgreementScore(
+            List<SourceListingResponse> sourceListings,
+            List<String> conflicts,
+            Double priceSpreadPercentage
+    ) {
+        int score = 100;
+
+        score = score - (conflicts.size() * 25);
+
+        if (priceSpreadPercentage != null
+                && priceSpreadPercentage > 10) {
+
+            score = score - 10;
+        }
+
+        if (sourceListings.size() < 2) {
+            score = score - 10;
+        }
+
+        return Math.max(score, 0);
+    }
+
+    private String getSourceAgreementLabel(int score) {
+
+        if (score >= 85) {
+            return "HIGH";
+        }
+
+        if (score >= 60) {
+            return "MEDIUM";
+        }
+
+        return "LOW";
     }
 
     private List<String> findSourceConflicts(
