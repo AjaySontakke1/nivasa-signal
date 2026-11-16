@@ -38,6 +38,9 @@ public class SourceListingService {
         sourceListing.setSourceName(request.sourceName());
         sourceListing.setExternalListingId(request.externalListingId());
         sourceListing.setSourceUrl(request.sourceUrl());
+        sourceListing.setSourcePropertyType(request.sourcePropertyType());
+        sourceListing.setSourceBhk(request.sourceBhk());
+        sourceListing.setSourceAreaSqft(request.sourceAreaSqft());
         sourceListing.setSourcePriceInr(request.sourcePriceInr());
         sourceListing.setSourceStatus(request.sourceStatus());
         sourceListing.setLastSeenAt(LocalDateTime.now());
@@ -65,6 +68,9 @@ public class SourceListingService {
                 ));
 
         sourceListing.setSourceUrl(request.sourceUrl());
+        sourceListing.setSourcePropertyType(request.sourcePropertyType());
+        sourceListing.setSourceBhk(request.sourceBhk());
+        sourceListing.setSourceAreaSqft(request.sourceAreaSqft());
         sourceListing.setSourcePriceInr(request.sourcePriceInr());
         sourceListing.setSourceStatus(request.sourceStatus());
         sourceListing.setLastSeenAt(LocalDateTime.now());
@@ -152,6 +158,9 @@ public class SourceListingService {
                 sourceListing.getSourceName(),
                 sourceListing.getExternalListingId(),
                 sourceListing.getSourceUrl(),
+                sourceListing.getSourcePropertyType(),
+                sourceListing.getSourceBhk(),
+                sourceListing.getSourceAreaSqft(),
                 sourceListing.getSourcePriceInr(),
                 sourceListing.getSourceStatus(),
                 sourceListing.getLastSeenAt()

@@ -2,38 +2,35 @@ package com.nivasasignal.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
 
 public record CreateSourceListingRequest(
 
-        @NotNull(message = "Property ID is required")
-        @Positive(message = "Property ID must be greater than zero")
+        @NotNull
+        @Positive
         Long propertyId,
 
-        @NotBlank(message = "Source name is required")
-        @Size(max = 30)
+        @NotBlank
         String sourceName,
 
-        @NotBlank(message = "External listing ID is required")
-        @Size(max = 255)
+        @NotBlank
         String externalListingId,
 
-        @NotBlank(message = "Source URL is required")
-        @Size(max = 1000)
-        @Pattern(
-                regexp = "^https?://.+",
-                message = "Source URL must start with http:// or https://"
-        )
+        @NotBlank
         String sourceUrl,
 
-        @NotNull(message = "Source price is required")
-        @Positive(message = "Source price must be greater than zero")
+        String sourcePropertyType,
+
+        String sourceBhk,
+
+        BigDecimal sourceAreaSqft,
+
+        @Positive
         Long sourcePriceInr,
 
-        @NotBlank(message = "Source status is required")
-        @Size(max = 20)
+        @NotBlank
         String sourceStatus
 ) {
 }
