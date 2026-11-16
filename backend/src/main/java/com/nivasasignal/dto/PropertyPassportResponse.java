@@ -14,6 +14,7 @@ public record PropertyPassportResponse(
         Double priceSpreadPercentage,
         String freshnessLabel,
         LocalDateTime lastSourceSeenAt,
-        List<String> signals
+        List<String> signals,
+        List<String> conflicts
 ) {
 }

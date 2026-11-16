@@ -22,8 +22,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -208,6 +210,8 @@ public class PropertyService {
             signals.add("Source data may be outdated");
         }
 
+        List<String> conflicts = findSourceConflicts(sourceListings);
+
         return new PropertyPassportResponse(
                 property,
                 sourceListings,
@@ -219,8 +223,82 @@ public class PropertyService {
                 priceSpreadPercentage,
                 freshnessLabel,
                 lastSourceSeenAt,
-                signals
+                signals,
+                conflicts
         );
+    }
+
+    private List<String> findSourceConflicts(
+            List<SourceListingResponse> sourceListings
+    ) {
+        Set<String> propertyTypes = new HashSet<>();
+        Set<String> bhkValues = new HashSet<>();
+
+        BigDecimal smallestArea = null;
+        BigDecimal largestArea = null;
+
+        for (SourceListingResponse source : sourceListings) {
+
+            if (source.sourcePropertyType() != null
+                    && !source.sourcePropertyType().isBlank()) {
+
+                propertyTypes.add(
+                        source.sourcePropertyType()
+                                .trim()
+                                .toUpperCase()
+                );
+            }
+
+            if (source.sourceBhk() != null
+                    && !source.sourceBhk().isBlank()) {
+
+                bhkValues.add(
+                        source.sourceBhk()
+                                .trim()
+                                .toUpperCase()
+                );
+            }
+
+            BigDecimal sourceArea = source.sourceAreaSqft();
+
+            if (sourceArea != null) {
+
+                if (smallestArea == null
+                        || sourceArea.compareTo(smallestArea) < 0) {
+
+                    smallestArea = sourceArea;
+                }
+
+                if (largestArea == null
+                        || sourceArea.compareTo(largestArea) > 0) {
+
+                    largestArea = sourceArea;
+                }
+            }
+        }
+
+        List<String> conflicts = new ArrayList<>();
+
+        if (propertyTypes.size() > 1) {
+            conflicts.add("Property type differs across sources");
+        }
+
+        if (bhkValues.size() > 1) {
+            conflicts.add("BHK differs across sources");
+        }
+
+        if (smallestArea != null && largestArea != null) {
+
+            BigDecimal areaDifference = largestArea.subtract(smallestArea);
+
+            if (areaDifference.compareTo(BigDecimal.valueOf(20)) > 0) {
+                conflicts.add(
+                        "Area differs by more than 20 sq ft across sources"
+                );
+            }
+        }
+
+        return conflicts;
     }
 
     private String getFreshnessLabel(LocalDateTime lastSourceSeenAt) {
