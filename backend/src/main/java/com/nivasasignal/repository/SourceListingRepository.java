@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SourceListingRepository
@@ -14,4 +15,9 @@ public interface SourceListingRepository
     List<SourceListing> findByPropertyId(Long propertyId);
 
     List<SourceListing> findByLastSeenAtBefore(LocalDateTime dateTime);
+
+    Optional<SourceListing> findBySourceNameAndExternalListingId(
+            String sourceName,
+            String externalListingId
+    );
 }
