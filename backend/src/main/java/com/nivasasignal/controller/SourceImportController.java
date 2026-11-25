@@ -4,7 +4,6 @@ import com.nivasasignal.dto.SourceImportResponse;
 import com.nivasasignal.service.SourceImportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,14 +17,13 @@ public class SourceImportController {
 
     private final SourceImportService sourceImportService;
 
-    @PostMapping("/properties/{propertyId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SourceImportResponse importListings(
-            @PathVariable Long propertyId,
             @RequestParam String city
     ) {
         int importedCount =
-                sourceImportService.importListings(propertyId, city);
+                sourceImportService.importListings(city);
 
         return new SourceImportResponse(importedCount);
     }

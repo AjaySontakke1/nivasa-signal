@@ -1,14 +1,12 @@
 package com.nivasasignal.service;
 
+import com.nivasasignal.entity.Property;
 import com.nivasasignal.entity.SourceListing;
-import com.nivasasignal.repository.PropertyRepository;
 import com.nivasasignal.repository.SourceListingRepository;
 import com.nivasasignal.source.connector.ExternalListing;
 import com.nivasasignal.source.connector.SourceConnector;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -16,20 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SourceImportService {
 
-    private final PropertyRepository propertyRepository;
+    private final PropertyMatchingService propertyMatchingService;
     private final SourceListingRepository sourceListingRepository;
     private final List<SourceConnector> sourceConnectors;
 
-    public int importListings(Long propertyId, String city) {
-
-        boolean propertyExists = propertyRepository.existsById(propertyId);
-
-        if (!propertyExists) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Property not found"
-            );
-        }
+    public int importListings(String city) {
 
         int importedCount = 0;
 
@@ -46,9 +35,18 @@ public class SourceImportService {
                                         connector.sourceName(),
                                         externalListing.externalListingId()
                                 )
-                                .orElse(new SourceListing());
+                                .orElse(null);
 
-                sourceListing.setPropertyId(propertyId);
+                if (sourceListing == null) {
+
+                    Property property = propertyMatchingService
+                            .findOrCreate(externalListing);
+
+                    sourceListing = new SourceListing();
+
+                    sourceListing.setPropertyId(property.getId());
+                }
+
                 sourceListing.setSourceName(connector.sourceName());
                 sourceListing.setExternalListingId(
                         externalListing.externalListingId()
